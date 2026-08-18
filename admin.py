@@ -1,4 +1,4 @@
-from club import Club
+from club import Club # modificar para que herede de club categoria la lista de __socios
 from socio import Socio
 
 class Administrador:
@@ -21,7 +21,7 @@ class Administrador:
 
     # 1) Registrar nuevos socios en un club 
     def registrar_socio(self, club, socio):
-        if socio not in club.socios:
+        if socio not in club.socios: # esta linea hay que modificar 
             club.socios.append(socio)
             socio.agregar_club(club)
             print(f"El administrador {self.nombre} registró a {socio.get_usuario()} en el club {club.nombre}.")

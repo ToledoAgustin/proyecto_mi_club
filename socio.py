@@ -1,10 +1,10 @@
 from club import Club
 
-class Socio:
+class Socio: # socio tiene que heredar de persona.
     def __init__(self, fecha_inscripcion, estado, usuario, contrasenia):
         self.clubes = []
         self.cuotas = []
-        self.socios = []        
+        self.socios = [] # no va 
         self.fecha_inscripcion = fecha_inscripcion
         self.estado = estado # "Activo" o "Suspendido"
         self.__usuario = usuario

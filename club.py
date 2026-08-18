@@ -5,7 +5,7 @@ class Club:
     def __init__(self, nombre, descripcion, ubicacion, presidente, fecha_fundacion):
         self.nombre = nombre
         self.descripcion = descripcion
-        self.socios = []
+        self.socios = [] # no va
         self.ubicacion = ubicacion
         self.__presidente = presidente
         self.__fecha_fundacion = fecha_fundacion  # se espera el año como número, ej: 1995
