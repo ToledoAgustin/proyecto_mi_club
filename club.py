@@ -60,8 +60,8 @@ class Club:
 
 
 
-club1 = Club("9 de julio Rafaela", "Club de fútbol", "Santa Fe", "Lucas Astrada", 1904)
-club2 = Club("Inter Miami", "Club de la MLS", "Miami", "David Beckham", 2018)
+club1 = Club("9 de julio Rafaela", "Club de fútbol", "Santa Fe", "Lucas Astrada", "09/07/1904")
+club2 = Club("Inter Miami", "Club de la MLS", "Miami", "David Beckham", "09/12/2018")
 
 club1.set_presidente("Juan Román Riquelme")
 

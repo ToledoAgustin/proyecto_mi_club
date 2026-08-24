@@ -1,7 +1,8 @@
 class Persona:
-    def __init__(self, nombre_completo, edad, tipo_identificacion, identificacion, nacionalidad):
+    def __init__(self, nombre_completo, edad, tipo_identificacion, identificacion, nacionalidad, club):
         self.nombre_completo = nombre_completo
         self.edad = edad
+        self.club = club
         self.__tipo_identificacion = tipo_identificacion
         self.__identificacion = identificacion
         self.__nacionalidad = nacionalidad

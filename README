@@ -1,11 +1,5 @@
 Agustin y Matias:
 
-En la clase club utilizan la fecha de fundación como año, únicamente quieren que reciba el año para después usarlo en los métodos con la librería datatime, pero en la clase ClubCategoria me lo pasan como str(no tiene lógica).
-Hay dos opciones :
-Solo el año como int 2018 en vez de "09/12/2018" o cambia club.py para que acepte el string "09/12/2018" y lo pase con datetime.strptime() antes de calcular la antigüedad.
-
-La lista socios no va en la clase socio, no la usan y no tiene sentido.
-
 Hay dos listas en paralelo que son socios de la clase club y club categoría que 
 tiene __socios, vamos a querer que en la clase administrador use la lista privada 
 de la clase clubcategoria y que elimine de la clase club la lista de socios. 
