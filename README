@@ -1,4 +1,4 @@
-Correcciones aplicadas
+Correcciones aplicadas:
 
 - club.py: fix calcular_antiguedad (str vs int, usar strptime), agregado método mostrar_antiguedad, pruebas protegidas con if __name__ == "__main__":.
 - clubCategoria.py: agregados get_socios()/set_socios()/agregar_socio(), métodos reindentados dentro de la clase, argumentos de Socio en pruebas completados.
