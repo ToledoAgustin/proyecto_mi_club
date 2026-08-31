@@ -2,8 +2,8 @@ from persona import Persona
 
 class Socio(Persona):
     def __init__(self, nombre_completo, edad, tipo_identificacion, identificacion, nacionalidad,
-                 fecha_inscripcion, estado, usuario, contrasenia, club):
-        super().__init__(nombre_completo, edad, tipo_identificacion, identificacion, nacionalidad, club)
+                 fecha_inscripcion, estado, usuario, contrasenia):
+        super().__init__(nombre_completo, edad, tipo_identificacion, identificacion, nacionalidad)
         self.clubes = []
         self.cuotas = []
         self.fecha_inscripcion = fecha_inscripcion
@@ -119,11 +119,11 @@ class Socio(Persona):
         print(f"Usuario: {self.__usuario}")
         print("=" * 30)
 
-socio1 = Socio("Matias Galarza Borja", "2", "DNI", 49903017, "Argentina", 23/02/2026, "Activo", "MatiCABJ", "MATIAS2011", "Inter Miami")
-club1 = 
+socio1 = Socio("Matias Galarza Borja", 2, "DNI", 49903017, "Argentina", "23/02/2026", "Activo", "MatiCABJ", "MATIAS2011")
+
 
 socio1.mostrar_clubes()
-socio1.dar_baja_club(club_2)
+# socio1.dar_baja_club(club_2)
 socio1.mostrar_clubes()
 
 socio1.generar_cuota("Agosto 2026", 15000)

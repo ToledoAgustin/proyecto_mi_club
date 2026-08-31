@@ -1,26 +1,26 @@
 from club import Club
 from socio import Socio
 
-
 class ClubCategoria(Club):
     def __init__(self, nombre, descripcion, ubicacion, presidente, fecha_fundacion):
         super().__init__(nombre, descripcion, ubicacion, presidente, fecha_fundacion)
         self.__socios = []
         self.actividades = []
 
-    def socios(self):
-        return self.__socios
-
     def set_socios(self, socios):
         self.__socios = socios
+
+    def get_socios(self):
+        return self.__socios
 
     # --------- 1) Registrar nuevos socios ---------
     def registrar_socio(self, socio):
         self.__socios.append(socio)
         print(f"Socio '{socio.get_usuario()}' registrado con éxito.")
-
+        
     def agregar_socio(self, socio):
-        self.registrar_socio(socio)
+        self.__socios.append(socio)
+        print(f"Socio '{socio.get_usuario()}' registrado con éxito.")
 
     def mostrar_socios(self):
         print("· Lista de Socios:")
@@ -102,9 +102,9 @@ mi_club.actividad_nueva("Handball")
 mi_club.mostrar_actividades()
 
     
-socio1 = Socio("01/01/2020", "Activo", "Changote", "clave1")
-socio2 = Socio("01/02/2020", "Activo", "Facu", "clave2")
-socio3 = Socio("01/03/2020", "Suspendido", "Bubu", "clave3")
+socio1 = Socio("Changote Fernández", 28, "DNI", "40123456", "Argentina", "01/01/2020", "Activo", "Changote", "clave1")
+socio2 = Socio("Facundo López", 24, "DNI", "41234567", "Argentina", "01/02/2020", "Activo", "Facu", "clave2")
+socio3 = Socio("Bubu Martínez", 35, "DNI", "35123456", "Argentina", "01/03/2020", "Suspendido", "Bubu", "clave3")
 
 mi_club.agregar_socio(socio1)
 mi_club.agregar_socio(socio2)

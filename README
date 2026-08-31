@@ -1,7 +1,8 @@
-Agustin y Matias:
+Correcciones aplicadas
 
-Hay dos listas en paralelo que son socios de la clase club y club categoría que 
-tiene __socios, vamos a querer que en la clase administrador use la lista privada 
-de la clase clubcategoria y que elimine de la clase club la lista de socios. 
-
-socio no hereda de persona.
+- club.py: fix calcular_antiguedad (str vs int, usar strptime), agregado método mostrar_antiguedad, pruebas protegidas con if __name__ == "__main__":.
+- clubCategoria.py: agregados get_socios()/set_socios()/agregar_socio(), métodos reindentados dentro de la clase, argumentos de Socio en pruebas completados.
+- persona.py: sin parámetro club (esa relación es de Socio), tipos y argumentos de prueba corregidos.
+- socio.py: super().__init__() sin pasar club, fechas entre comillas, edad como int, sacado argumento extra de club, comentada línea con variable no definida (club_2).
+- admin.py: eliminado super(). inválido, registrar_socio usa get_socios()/agregar_socio() en vez de atributo privado, agregado import Club, argumentos de Socio completados.
+- General: atributos privados solo vía getters/setters, tipos consistentes (edad int, fechas "dd/mm/aaaa").

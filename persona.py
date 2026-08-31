@@ -1,8 +1,7 @@
 class Persona:
-    def __init__(self, nombre_completo, edad, tipo_identificacion, identificacion, nacionalidad, club):
+    def __init__(self, nombre_completo, edad, tipo_identificacion, identificacion, nacionalidad):
         self.nombre_completo = nombre_completo
         self.edad = edad
-        self.club = club
         self.__tipo_identificacion = tipo_identificacion
         self.__identificacion = identificacion
         self.__nacionalidad = nacionalidad
@@ -50,7 +49,7 @@ class Persona:
             return "Identificacion Válida"
         
 
-persona1 = Persona("Carlos Gómez", 25, "DNI", "34567890", "Argentina")
+persona1 = Persona("Maxi Jackson", 59, "DNI", 88787878, "Peru")
 persona1.mostrar_datos()
 persona2 = Persona("Santi Pérez", 15, "DNI", "", "Uruguay")
 persona2.mostrar_datos()

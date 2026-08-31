@@ -1,11 +1,9 @@
 from datetime import datetime
 
-
 class Club:
     def __init__(self, nombre, descripcion, ubicacion, presidente, fecha_fundacion):
         self.nombre = nombre
         self.descripcion = descripcion
-        self.socios = [] # no va
         self.ubicacion = ubicacion
         self.__presidente = presidente
         self.__fecha_fundacion = fecha_fundacion  # se espera el año como número, ej: 1995
@@ -27,14 +25,14 @@ class Club:
 
     # --------- 2) Calcular / mostrar antigüedad ---------
     def calcular_antiguedad(self):
+        fecha_fundacion_dt = datetime.strptime(self.__fecha_fundacion, "%d/%m/%Y")
         anio_actual = datetime.now().year
-        antiguedad = anio_actual - self.__fecha_fundacion
+        antiguedad = anio_actual - fecha_fundacion_dt.year
         return antiguedad
 
     def mostrar_antiguedad(self):
         antiguedad = self.calcular_antiguedad()
-        print(f"Antigüedad: {antiguedad} años")
-        return antiguedad
+        print(f"El club tiene {antiguedad} años de antigüedad.")
 
     # --------- 3) Determinar si es institución histórica ---------
     def es_institucion_historica(self):

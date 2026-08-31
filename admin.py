@@ -1,7 +1,7 @@
-from club import Club # modificar para que herede de club categoria la lista de __socios
+from clubCategoria import ClubCategoria
 from socio import Socio
 
-class Administrador:
+class Administrador():
     def __init__(self, nombre, usuario, contrasenia):
         self.nombre = nombre
         self.__usuario = usuario
@@ -21,8 +21,8 @@ class Administrador:
 
     # 1) Registrar nuevos socios en un club 
     def registrar_socio(self, club, socio):
-        if socio not in club.socios: # esta linea hay que modificar 
-            club.socios.append(socio)
+        if socio not in club.get_socios():
+            club.agregar_socio(socio)
             socio.agregar_club(club)
             print(f"El administrador {self.nombre} registró a {socio.get_usuario()} en el club {club.nombre}.")
         else:
@@ -41,10 +41,10 @@ class Administrador:
     # 4) Listado completo de socios de un club
     def listar_socios_club(self, club):
         print(f"SOCIOS DEL CLUB {club.nombre}:")
-        if not club.socios:
+        if not club.get_socios():
             print("El club no tiene socios registrados.")
         else:
-            for socio in club.socios:
+            for socio in club.get_socios():
                 print(f" - {socio.get_usuario()} (Estado: {socio.estado})")
 
     # 5) Verificar credenciales de acceso del administrador
@@ -57,9 +57,9 @@ class Administrador:
             return False
 
 admin1 = Administrador("Laura Gómez", "adminLaura", "clave123")
-club_1 = Club("De Caño", "Club de fútbol amateur", "Buenos Aires", "Ana Pérez", 1995)
-socio1 = Socio("09/12/2018", "Activo", "PepeArgento2006", "holamundo123")
-socio2 = Socio("15/03/2019", "Activo", "MaríaFlores", "clave456")
+club_1 = ClubCategoria("Futsal", "Microestadio 40x20", "Amancio Alcorta 2334", "Bubu", "09/12/2018")
+socio1 = Socio("Pepe Argento", 22, "DNI", "38111222", "Argentina", "09/12/2018", "Activo", "PepeArgento2006", "holamundo123")
+socio2 = Socio("María Flores", 27, "DNI", "39222333", "Argentina", "15/03/2019", "Activo", "MaríaFlores", "clave456")
 # 1) Registrar socios en el club
 admin1.registrar_socio(club_1, socio1)
 admin1.registrar_socio(club_1, socio2)
