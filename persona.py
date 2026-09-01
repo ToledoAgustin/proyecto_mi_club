@@ -40,16 +40,16 @@ class Persona:
         if self.edad >= 18:
             return "Es mayor de edad."
         else:
-            return "Es menor de edad."
-
+            return "Es menor de edad." # que la edad sea entre el rango de 1 a 110 años. y que tire un error al poner negativo
+# hacer otro metodo que me valide que la edad no sea negativa ni pasando los 110 y despues que a ese metodo lo use en el otro metodo de mayor de edad, osea que cada uno tenga su propio metodo
     def validar_identificacion(self):
-        if self.__identificacion == "":
+        if self.__identificacion == "":#saber si el dni tiene 7 y 8 digitos y que no me permita poner letras, que sea un valor numerico
             return "Identificacion Inválida (está vacía)"
         else:
             return "Identificacion Válida"
         
 
-persona1 = Persona("Maxi Jackson", 59, "DNI", 88787878, "Peru")
+persona1 = Persona("Maxi Jackson", 10, "DNI", "uuf9e409", "Peru")
 persona1.mostrar_datos()
 persona2 = Persona("Santi Pérez", 15, "DNI", "", "Uruguay")
 persona2.mostrar_datos()

@@ -14,13 +14,10 @@ class ClubCategoria(Club):
         return self.__socios
 
     # --------- 1) Registrar nuevos socios ---------
-    def registrar_socio(self, socio):
-        self.__socios.append(socio)
-        print(f"Socio '{socio.get_usuario()}' registrado con éxito.")
-        
     def agregar_socio(self, socio):
         self.__socios.append(socio)
         print(f"Socio '{socio.get_usuario()}' registrado con éxito.")
+#antes de agregar al socio que verifique si ya estaba.
 
     def mostrar_socios(self):
         print("· Lista de Socios:")

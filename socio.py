@@ -75,19 +75,21 @@ class Socio(Persona):
         print(f"No se encontró una cuota pendiente para el período {periodo}.")
         return False
 
+    def cantidad_cuotas_pendientes(self):
+        cantidad_pendientes = 0
+        for i in self.cuotas:
+            if i ["estado"] == "Pendiente":
+                cantidad_pendientes +=1
+        print(f"Cuotas pendientes: {cantidad_pendientes}")
+        return cantidad_pendientes
+
     def tiene_deudas(self):
-        cantidad_pendientes = sum(1 for c in self.cuotas if c["estado"] == "Pendiente")
-        if cantidad_pendientes > 0:
-            print(f"El socio {self.__usuario} tiene {cantidad_pendientes} cuota(s) sin abonar.")
+        if self.cantidad_cuotas_pendientes() > 0:
+            print(f"El socio {self.__usuario} tiene {self.cantidad_cuotas_pendientes()} cuota(s) sin abonar.")
             return True
         else:
             print(f"El socio {self.__usuario} no posee deudas.")
             return False
-
-    def cantidad_cuotas_pendientes(self):
-        cantidad = sum(1 for c in self.cuotas if c["estado"] == "Pendiente")
-        print(f"Cuotas pendientes: {cantidad}")
-        return cantidad
 
     def mostrar_cuotas(self):
         print("CUOTAS:")

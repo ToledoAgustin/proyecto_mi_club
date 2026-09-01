@@ -37,9 +37,9 @@ class Club:
     # --------- 3) Determinar si es institución histórica ---------
     def es_institucion_historica(self):
         if self.calcular_antiguedad() > 50:
-            return True
+            return "es un club historico"
         else:
-            return False
+            return "no es un club historico"
 
     def mostrar_info(self):
         print(f'Nombre: {self.nombre}')

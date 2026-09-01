@@ -23,9 +23,9 @@ class Cuota:
         fecha_actual = datetime.now().date()
 
         if self.__estado != "Pagada" and fecha_actual > fecha_vencimiento:
-            return "Sí"
+            return "Cuota vencida"
         else:
-            return "No"
+            return "Cuota abonada"
         
     # 3) Actualizar automáticamente el estado de la cuota 
     def actualizar_estado(self):
@@ -52,7 +52,7 @@ class Cuota:
         elif dias == 0:
             print(f"La cuota del período {self.periodo} vence hoy.")
         else:
-            print(f"La cuota del período {self.periodo} venció hace {abs(dias)} día(s).") # abs :valor absoluto
+            print(f"La cuota del período {self.periodo} venció hace {abs(dias)} día(s).") # abs :valor absoluto para que me pase un valor negativo a positivo
         return dias
     
     # 5) Renovar la cuota para un nuevo período
@@ -71,7 +71,7 @@ class Cuota:
 
 
 # Cuota vencida (fecha pasada, sin pagar)
-cuota1 = Cuota("Pendiente", "01/01/2026", "Enero 2026")
+cuota1 = Cuota("Pendiente", "25/09/2026", "Septiembre 2026")
 cuota1.mostrar_cuota()
 print("¿Está vencida?", cuota1.esta_vencida())
 cuota1.dias_para_vencimiento()
@@ -79,7 +79,7 @@ cuota1.actualizar_estado()
 cuota1.mostrar_cuota()
 print()
 # Cuota que aún no vence
-cuota2 = Cuota("Pendiente", "31/12/2026", "Diciembre 2026")
+cuota2 = Cuota("Pendiente", "30/09/2026", "Septiembre 2026")
 cuota2.mostrar_cuota()
 print("¿Está vencida?", cuota2.esta_vencida())
 cuota2.dias_para_vencimiento()
