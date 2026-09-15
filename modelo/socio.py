@@ -1,15 +1,15 @@
-from persona import Persona
+from modelo.persona import Persona
 
 
 class Socio(Persona):
     def __init__(self, nombre_completo, edad, tipo_identificacion, identificacion, nacionalidad,
-                 fecha_inscripcion, estado, usuario, contrasenia, es_admin=False):
+                fecha_inscripcion, estado, usuario, contrasenia, rol):
         super().__init__(nombre_completo, edad, tipo_identificacion, identificacion, nacionalidad)
         self.clubes = []
         self.cuotas = []
         self.fecha_inscripcion = fecha_inscripcion
         self.estado = estado  # "Activo" o "Suspendido"
-        self.es_admin = es_admin  # True = socio con rol de administrador
+        self.rol = rol  # True = socio con rol de administrador
         self.__usuario = usuario
         self.__contrasenia = contrasenia
 
@@ -26,7 +26,8 @@ class Socio(Persona):
         self.__contrasenia = contrasenia
 
     def es_administrador(self):
-        return self.es_admin
+        if self.rol == "admin":
+            return True
 
     def cambiar_contrasenia(self, contrasenia_actual, contrasenia_nueva):
         if contrasenia_actual == self.__contrasenia:

@@ -100,8 +100,6 @@
 # print(actividad1.mostrar_info())
 
 
-
-
 from datetime import date
 from pathlib import Path
 from base_datos.base_datos import conectar, crear_tablas, guardar_socio
@@ -110,6 +108,7 @@ from modelo.socio import Socio
 RUTA = Path(__file__).parent / "club.db"
 conexion = conectar(str(RUTA))
 crear_tablas(conexion)
-chango = Socio("Arian Palacios", 16, "DNI", 49093472, "Argentino", date(2026, 1, 1), "Activo", "arian_04" ,"chango234")
-guardar_socio(conexion, chango)
+bubu = Socio("bubu", 24, "dni", 42890413, "argentino", date(2026, 1, 1), "activo", "bubu123", "bubu0707", "socio")
+guardar_socio(conexion, bubu)
 print("Socio guardado.")
+conexion.close()

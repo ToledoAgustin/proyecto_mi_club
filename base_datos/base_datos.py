@@ -19,6 +19,7 @@ def crear_tablas(conexion):
             rol                 TEXT DEFAULT 'socio',
             usuario             TEXT UNIQUE NOT NULL,
             contrasenia         TEXT NOT NULL
+        )
     """)
     conexion.commit()
 
