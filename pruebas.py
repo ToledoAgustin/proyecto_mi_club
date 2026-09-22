@@ -102,13 +102,25 @@
 
 from datetime import date
 from pathlib import Path
-from base_datos.base_datos import conectar, crear_tablas, guardar_socio
+from base_datos.base_datos import conectar, crear_tablas, guardar_socio, guardar_cuota, listar_cuotas_de_socio
 from modelo.socio import Socio
+from modelo.cuota import Cuota
 
 RUTA = Path(__file__).parent / "club.db"
 conexion = conectar(str(RUTA))
 crear_tablas(conexion)
-bubu = Socio("bubu", 24, "dni", 42890413, "argentino", date(2026, 1, 1), "activo", "bubu123", "bubu0707", "socio")
+
+bubu = Socio("bubu", 24, "dni", 42890413, "argentino", date(2026, 1, 1), "activo", "bubu124", "bubu0707", "socio")
 guardar_socio(conexion, bubu)
 print("Socio guardado.")
+
+cuota1 = Cuota("Pendiente", date(2026, 10, 10), "Octubre 2026")
+cuota1.socio_id = 1
+guardar_cuota(conexion, cuota1)
+print("Cuota guardada.")
+
+cuotas = listar_cuotas_de_socio(conexion, "bubu123")
+for i in cuotas:
+    print(i.estado, i.fecha_de_vencimiento, i.periodo)
+
 conexion.close()

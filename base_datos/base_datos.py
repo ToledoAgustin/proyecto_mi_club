@@ -1,4 +1,7 @@
 import sqlite3
+from datetime import date
+from modelo.cuota import Cuota
+
 
 def conectar(ruta):
     conexion = sqlite3.connect(ruta)
@@ -21,6 +24,16 @@ def crear_tablas(conexion):
             contrasenia         TEXT NOT NULL
         )
     """)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS cuotas (
+            id                          INTEGER PRIMARY KEY AUTOINCREMENT,
+            estado    TEXT DEFAULT 'Pendiente',
+            fecha_de_vencimiento         DATE,
+            periodo                     TEXT,
+            socio_id  INTEGER NOT NULL,
+            FOREIGN KEY (socio_id) REFERENCES socios(id)
+        )
+    """)
     conexion.commit()
 
 def guardar_socio(conexion, socio):
@@ -41,3 +54,41 @@ def guardar_socio(conexion, socio):
         socio.get_contrasenia(),
     ))
     conexion.commit()
+
+def guardar_cuota(conexion, cuota):
+    cursor = conexion.cursor()
+    fila = cursor.fetchone()
+    if fila is None:
+        raise ValueError("El socio no existe")
+    socio_id = fila[0]
+    cursor.execute("""
+        INSERT INTO cuotas (estado, fecha_de_vencimiento, periodo, socio_id)
+        VALUES (?, ?, ?, ?)
+    """, (
+        cuota.estado,
+        cuota.fecha_de_vencimiento.isoformat(),
+        cuota.periodo,
+        cuota.socio_id,
+        
+    ))
+    conexion.commit()
+
+def listar_cuotas_de_socio(conexion, usuario):
+    cursor = conexion.cursor()
+    cursor.execute("SELECT id FROM socios WHERE usuario = ?", (usuario,))
+    fila = cursor.fetchone()
+    if fila is None:
+        return []
+    socio_id = fila[0]
+
+    cursor.execute(
+        "SELECT estado, fecha_de_vencimiento, periodo FROM cuotas WHERE socio_id = ?",
+        (socio_id,)
+    )
+    cuotas = []
+    for periodo, estado, fecha_vencimiento in cursor.fetchall():
+        cuota = Cuota(estado, date.fromisoformat(fecha_vencimiento), periodo)
+        cuotas.append(cuota)
+    return cuotas
+
+
