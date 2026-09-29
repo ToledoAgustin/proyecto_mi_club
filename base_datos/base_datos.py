@@ -27,10 +27,10 @@ def crear_tablas(conexion):
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS cuotas (
             id                          INTEGER PRIMARY KEY AUTOINCREMENT,
-            estado    TEXT DEFAULT 'Pendiente',
-            fecha_de_vencimiento         DATE,
+            socio_id                    INTEGER NOT NULL,
+            estado                      TEXT DEFAULT 'Pendiente',
+            fecha_de_vencimiento        DATE,
             periodo                     TEXT,
-            socio_id  INTEGER NOT NULL,
             FOREIGN KEY (socio_id) REFERENCES socios(id)
         )
     """)
@@ -39,7 +39,7 @@ def crear_tablas(conexion):
 def guardar_socio(conexion, socio):
     cursor = conexion.cursor()
     cursor.execute("""
-        INSERT INTO socios (nombre_completo, edad, tipo_identificacion,identificacion, nacionalidad, fecha_inscripcion,estado, rol, usuario, contrasenia)
+        INSERT INTO socios (nombre_completo, edad, tipo_identificacion, identificacion, nacionalidad, fecha_inscripcion, estado, rol, usuario, contrasenia)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (
         socio.nombre_completo,
@@ -47,7 +47,7 @@ def guardar_socio(conexion, socio):
         socio.get_tipo_identificacion(),
         socio.get_identificacion(),
         socio.get_nacionalidad(),
-        socio.fecha_inscripcion.isoformat(),
+        socio.fecha_inscripcion.isoformat() if hasattr(socio.fecha_inscripcion, 'isoformat') else str(socio.fecha_inscripcion),
         socio.estado,
         socio.rol,
         socio.get_usuario(),
@@ -55,21 +55,24 @@ def guardar_socio(conexion, socio):
     ))
     conexion.commit()
 
-def guardar_cuota(conexion, cuota):
+def guardar_cuota(conexion, socio, cuota):
     cursor = conexion.cursor()
+    # Busca al socio por su ID numérico o por su usuario
+    cursor.execute("SELECT id FROM socios WHERE usuario = ?", (socio.get_usuario(),))
     fila = cursor.fetchone()
+    
     if fila is None:
         raise ValueError("El socio no existe")
-    socio_id = fila[0]
+    
+    socio_id_real = fila[0]
     cursor.execute("""
-        INSERT INTO cuotas (estado, fecha_de_vencimiento, periodo, socio_id)
+        INSERT INTO cuotas (socio_id, estado, fecha_de_vencimiento, periodo)
         VALUES (?, ?, ?, ?)
     """, (
-        cuota.estado,
-        cuota.fecha_de_vencimiento.isoformat(),
-        cuota.periodo,
-        cuota.socio_id,
-        
+        socio_id_real,
+        cuota.get_estado(),
+        cuota.fecha_de_vencimiento,
+        cuota.periodo
     ))
     conexion.commit()
 
@@ -86,9 +89,8 @@ def listar_cuotas_de_socio(conexion, usuario):
         (socio_id,)
     )
     cuotas = []
-    for periodo, estado, fecha_vencimiento in cursor.fetchall():
-        cuota = Cuota(estado, date.fromisoformat(fecha_vencimiento), periodo)
+    for estado, fecha_vencimiento, periodo in cursor.fetchall():
+        fecha_obj = date.fromisoformat(fecha_vencimiento) if isinstance(fecha_vencimiento, str) else fecha_vencimiento
+        cuota = Cuota(estado, fecha_obj, periodo)
         cuotas.append(cuota)
     return cuotas
-
-

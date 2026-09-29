@@ -107,20 +107,31 @@ from modelo.socio import Socio
 from modelo.cuota import Cuota
 
 RUTA = Path(__file__).parent / "club.db"
+
+# Si la base previa existe, la borra para que las pruebas arranquen limpias
+if RUTA.exists():
+    RUTA.unlink()
+
 conexion = conectar(str(RUTA))
 crear_tablas(conexion)
 
-bubu = Socio("bubu", 24, "dni", 42890413, "argentino", date(2026, 1, 1), "activo", "bubu124", "bubu0707", "socio")
+bubu = Socio("bubuzela_bubu", 24, "dni", 42890413, "argentino", date(2026, 1, 1), "activo", "bubu124", "bubu0707", "socio")
 guardar_socio(conexion, bubu)
 print("Socio guardado.")
 
 cuota1 = Cuota("Pendiente", date(2026, 10, 10), "Octubre 2026")
-cuota1.socio_id = 1
-guardar_cuota(conexion, cuota1)
+cuota1.socio_id = "bubu124" 
+guardar_cuota(conexion, bubu, cuota1)
 print("Cuota guardada.")
 
-cuotas = listar_cuotas_de_socio(conexion, "bubu123")
-for i in cuotas:
-    print(i.estado, i.fecha_de_vencimiento, i.periodo)
+carlito = Socio("carlito_bala", 30, "dni", 38456721, "argentino", date(2026, 2, 15), "activo", "carlito99", "bala1234", "socio")
+guardar_socio(conexion, carlito)
+print("Socio guardado.")
+
+cuota2 = Cuota("Pendiente", date(2026, 10, 10), "Octubre 2026")
+guardar_cuota(conexion, carlito, cuota2)
+print("Cuota guardada.")
+
 
 conexion.close()
+
