@@ -1,7 +1,7 @@
 import sqlite3
 from datetime import date
 from modelo.cuota import Cuota
-
+from modelo.socio import Socio
 
 def conectar(ruta):
     conexion = sqlite3.connect(ruta)
@@ -34,6 +34,22 @@ def crear_tablas(conexion):
             FOREIGN KEY (socio_id) REFERENCES socios(id)
         )
     """)
+
+    def crear_tablas(conexion):
+        cursor = conexion.cursor()
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS clubes (
+            id              INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre          TEXT NOT NULL UNIQUE,
+            descripcion     TEXT,
+            ubicacion       TEXT,
+            presidente      TEXT,
+            fecha_fundacion TEXT
+        )
+    """)
+
+                   
+
     conexion.commit()
 
 def guardar_socio(conexion, socio):
@@ -54,6 +70,22 @@ def guardar_socio(conexion, socio):
         socio.get_contrasenia(),
     ))
     conexion.commit()
+
+def buscar_socio_por_usuario(conexion, usuario):
+    cursor = conexion.cursor()
+    cursor.execute("""
+        SELECT id, nombre_completo, edad, tipo_identificacion, identificacion, 
+               nacionalidad, fecha_inscripcion, estado, usuario, contrasenia, rol 
+        FROM socios 
+        WHERE usuario = ?
+    """, (usuario,))
+    fila = cursor.fetchone()
+    if fila is None:
+        return  objeto_socio()
+    
+def objeto_socio(fila):
+    (_id, nombre_completo, edad, tipo_identificacion, identificacion, nacionalidad, fecha_inscripcion,     estado, usuario, contrasenia, rol) = fila
+    return  Socio(nombre_completo, edad, tipo_identificacion, identificacion, nacionalidad, fecha_inscripcion,estado, usuario, contrasenia, rol)
 
 def guardar_cuota(conexion, socio, cuota):
     cursor = conexion.cursor()
