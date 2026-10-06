@@ -102,9 +102,11 @@
 
 from datetime import date
 from pathlib import Path
-from base_datos.base_datos import conectar, crear_tablas, guardar_socio, guardar_cuota, listar_cuotas_de_socio
+from base_datos.base_datos import conectar, crear_tablas, guardar_socio, buscar_socio_por_usuario, guardar_cuota, listar_cuotas_de_socio, guardar_club, guardar_actividad, anotar_socio_actividad, listar_actividades_de_socio, desanotar_socio_actividad
 from modelo.socio import Socio
 from modelo.cuota import Cuota
+from modelo.club import Club
+from modelo.actividad import Actividad
 
 RUTA = Path(__file__).parent / "club.db"
 
@@ -131,6 +133,27 @@ print("Socio guardado.")
 cuota2 = Cuota("Pendiente", date(2026, 10, 10), "Octubre 2026")
 guardar_cuota(conexion, carlito, cuota2)
 print("Cuota guardada.")
+
+socio_buscado = buscar_socio_por_usuario(conexion, "bubu124")
+print("Socio encontrado:", socio_buscado)
+
+club = Club("9 de julio Rafaela", "Club de fútbol", "Santa Fe", "Lucas Astrada", "09/07/1904")
+guardar_club(conexion, club)
+print("Club guardado.")
+
+actividad1 = Actividad("Fútbol", "Martes", "18:00")
+actividad2 = Actividad("Natación", "Jueves", "10:00")
+guardar_actividad(conexion, actividad1)
+guardar_actividad(conexion, actividad2)
+print("Actividades guardadas.")
+
+anotar_socio_actividad(conexion, "bubu124", "Fútbol")
+anotar_socio_actividad(conexion, "bubu124", "Natación")
+
+actividades_bubu = listar_actividades_de_socio(conexion, "bubu124")
+
+
+desanotar_socio_actividad(conexion, "bubu124", "Natación")
 
 
 conexion.close()

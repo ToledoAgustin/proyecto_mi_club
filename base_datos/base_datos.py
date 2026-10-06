@@ -2,6 +2,8 @@ import sqlite3
 from datetime import date
 from modelo.cuota import Cuota
 from modelo.socio import Socio
+from modelo.actividad import Actividad
+from modelo.club import Club
 
 def conectar(ruta):
     conexion = sqlite3.connect(ruta)
@@ -35,7 +37,7 @@ def crear_tablas(conexion):
         )
     """)
 
-    def crear_tablas(conexion):
+    def crear_tablas_clubes(conexion):
         cursor = conexion.cursor()
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS clubes (
@@ -44,12 +46,34 @@ def crear_tablas(conexion):
             descripcion     TEXT,
             ubicacion       TEXT,
             presidente      TEXT,
-            fecha_fundacion TEXT
+            fecha_fundacion DATE
         )
     """)
-
-                   
-
+        
+    def socio_actividad(conexion):
+        cursor = conexion.cursor()   
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS socio_actividad (
+            socio_id INTEGER NOT NULL,
+            actividad_id INTEGER NOT NULL,
+            fecha_inscripcion TEXT DEFAULT CURRENT_DATE,
+            PRIMARY KEY (socio_id, actividad_id),
+            FOREIGN KEY (socio_id) REFERENCES socios(id),
+            FOREIGN KEY (actividad_id) REFERENCES actividades(id)
+    )
+    """)
+   
+    def crear_tablas_actividades(conexion):
+        cursor = conexion.cursor()
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS actividad (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre          TEXT NOT NULL,
+            dia             DATE NOT NULL,
+            horario         TIME NOT NULL
+        )
+    """)
+        
     conexion.commit()
 
 def guardar_socio(conexion, socio):
@@ -68,6 +92,37 @@ def guardar_socio(conexion, socio):
         socio.rol,
         socio.get_usuario(),
         socio.get_contrasenia(),
+    ))
+    conexion.commit()
+
+def guardar_club(conexion, club):
+    cursor = conexion.cursor()
+    # 1. Buscamos si ya existe un club con ese nombre
+    cursor.execute("SELECT id FROM clubes WHERE nombre = ?", (club.nombre,))
+    fila = cursor.fetchone()
+    # 2. Si NO existe (fila es None), lo insertamos
+    if fila is None:
+        cursor.execute("""
+            INSERT INTO clubes (nombre, descripcion, ubicacion, presidente, fecha_fundacion)
+            VALUES (?, ?, ?, ?, ?)
+        """, (
+            club.nombre,
+            club.descripcion,
+            club.ubicacion,
+            club.get_presidente(),
+            club.get_fecha_fundacion()
+    ))
+        conexion.commit()
+
+def guardar_actividad(conexion, actividad):
+    cursor = conexion.cursor()
+    cursor.execute("""
+        INSERT INTO actividades (nombre, dia, horario)
+        VALUES (?, ?, ?)
+    """, (
+        actividad.nombre,
+        actividad.dia,
+        actividad.horario
     ))
     conexion.commit()
 
@@ -126,3 +181,84 @@ def listar_cuotas_de_socio(conexion, usuario):
         cuota = Cuota(estado, fecha_obj, periodo)
         cuotas.append(cuota)
     return cuotas
+
+
+def anotar_socio_actividad(conexion, usuario, nombre_actividad):
+    """Anota al socio en la actividad indicada."""
+    cursor = conexion.cursor()
+
+    cursor.execute("SELECT id FROM socios WHERE usuario = ?", (usuario,))
+    fila = cursor.fetchone()
+    if fila is None:
+        return "El socio no existe."
+    socio_id = fila[0]
+
+    cursor.execute("SELECT id FROM actividades WHERE nombre = ?", (nombre_actividad,))
+    fila = cursor.fetchone()
+    if fila is None:
+        return f"La actividad {nombre_actividad} no existe."
+    actividad_id = fila[0]
+
+    cursor.execute(
+        "INSERT OR IGNORE INTO socio_actividad (socio_id, actividad_id) VALUES (?, ?)",
+        (socio_id, actividad_id)
+    )
+    conexion.commit()
+    return f"Te anotaste en {nombre_actividad}."
+
+
+def desanotar_socio_actividad(conexion, usuario, nombre_actividad):
+    """Desanota al socio de la actividad indicada."""
+    cursor = conexion.cursor()
+
+    cursor.execute("SELECT id FROM socios WHERE usuario = ?", (usuario,))
+    fila = cursor.fetchone()
+    if fila is None:
+        return "El socio no existe."
+    socio_id = fila[0]
+
+    cursor.execute("SELECT id FROM actividades WHERE nombre = ?", (nombre_actividad,))
+    fila = cursor.fetchone()
+    if fila is None:
+        return f"La actividad {nombre_actividad} no existe."
+    actividad_id = fila[0]
+
+
+    cursor.execute(
+        "DELETE FROM socio_actividad WHERE socio_id, actividad_id "
+        (socio_id, actividad_id)
+    )
+    conexion.commit()
+    return f"Te desanotaste de {nombre_actividad}."
+
+def listar_actividades_de_socio(conexion, usuario):
+    cursor = conexion.cursor()
+    cursor.execute("SELECT id FROM socios WHERE usuario = ?", (usuario,))
+    fila = cursor.fetchone()
+    if fila is None:
+        return []
+    socio_id = fila[0]
+
+    cursor.execute(
+        """
+        SELECT a.nombre
+        FROM actividades a
+        INNER JOIN socio_actividad sa ON a.id = sa.actividad_id
+        WHERE sa.socio_id = ?
+        """,
+        (socio_id,)
+    )
+
+    actividad = []
+    for fila in cursor.fetchall():
+        actividad.append(fila[0])
+    return actividad
+
+def obtener_club(conexion):
+    cursor = conexion.cursor()
+    cursor.execute("SELECT nombre, descripcion, ubicacion, presidente, fecha_fundacion FROM clubes LIMIT 1")
+    fila = cursor.fetchone()
+    if fila is None:
+        return None
+    nombre, descripcion, ubicacion, presidente, fecha_fundacion = fila
+    return Club(nombre, descripcion, ubicacion, presidente, fecha_fundacion)
