@@ -9,6 +9,8 @@ def conectar(ruta):
     conexion = sqlite3.connect(ruta)
     return conexion
 
+# --- Metodo para crear todas las tablas ----
+
 def crear_tablas(conexion):
     cursor = conexion.cursor()
     cursor.execute("""
@@ -37,9 +39,7 @@ def crear_tablas(conexion):
         )
     """)
 
-    def crear_tablas_clubes(conexion):
-        cursor = conexion.cursor()
-        cursor.execute("""
+    cursor.execute("""
         CREATE TABLE IF NOT EXISTS clubes (
             id              INTEGER PRIMARY KEY AUTOINCREMENT,
             nombre          TEXT NOT NULL UNIQUE,
@@ -49,10 +49,8 @@ def crear_tablas(conexion):
             fecha_fundacion DATE
         )
     """)
-        
-    def socio_actividad(conexion):
-        cursor = conexion.cursor()   
-        cursor.execute("""
+
+    cursor.execute("""
         CREATE TABLE IF NOT EXISTS socio_actividad (
             socio_id INTEGER NOT NULL,
             actividad_id INTEGER NOT NULL,
@@ -63,10 +61,8 @@ def crear_tablas(conexion):
     )
     """)
    
-    def crear_tablas_actividades(conexion):
-        cursor = conexion.cursor()
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS actividad (
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS actividades (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nombre          TEXT NOT NULL,
             dia             DATE NOT NULL,
@@ -75,6 +71,8 @@ def crear_tablas(conexion):
     """)
         
     conexion.commit()
+
+# ---Metodos de guardar y listar ---
 
 def guardar_socio(conexion, socio):
     cursor = conexion.cursor()
@@ -225,7 +223,7 @@ def desanotar_socio_actividad(conexion, usuario, nombre_actividad):
 
 
     cursor.execute(
-        "DELETE FROM socio_actividad WHERE socio_id, actividad_id "
+        "DELETE FROM socio_actividad WHERE socio_id = ? AND actividad_id = ?",
         (socio_id, actividad_id)
     )
     conexion.commit()
