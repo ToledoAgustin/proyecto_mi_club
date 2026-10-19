@@ -120,6 +120,7 @@ crear_tablas(conexion)
 bubu = Socio("bubuzela_bubu", 24, "dni", 42890413, "argentino", date(2026, 1, 1), "activo", "bubu124", "bubu0707", "socio")
 guardar_socio(conexion, bubu)
 print("Socio guardado.")
+blanco = "#ffffff"
 
 cuota1 = Cuota("Pendiente", date(2026, 10, 10), "Octubre 2026")
 cuota1.socio_id = "bubu124" 
