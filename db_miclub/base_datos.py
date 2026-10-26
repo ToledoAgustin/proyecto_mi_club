@@ -126,15 +126,27 @@ def guardar_actividad(conexion, actividad):
 
 def buscar_socio_por_usuario(conexion, usuario):
     cursor = conexion.cursor()
-    cursor.execute("""
-        SELECT id, nombre_completo, edad, tipo_identificacion, identificacion, 
-               nacionalidad, fecha_inscripcion, estado, usuario, contrasenia, rol 
-        FROM socios 
-        WHERE usuario = ?
-    """, (usuario,))
+    cursor.execute("SELECT * FROM socios WHERE usuario = ?", (usuario,))
     fila = cursor.fetchone()
     if fila is None:
-        return  objeto_socio()
+        return None
+
+    # Convertimos la fila a objeto Socio
+    socio = Socio(
+        fila[1],  # nombre_completo
+        fila[2],  # edad
+        fila[3],  # tipo_identificacion
+        fila[4],  # identificacion
+        fila[5],  # nacionalidad
+        date.fromisoformat(fila[6])
+        if isinstance(fila[6], str)
+        else fila[6],  # fecha_inscripcion
+        fila[7],  # estado
+        fila[8],  # usuario
+        fila[9],  # contrasenia
+        fila[10],  # rol
+    )
+    return socio
     
 def objeto_socio(fila):
     (_id, nombre_completo, edad, tipo_identificacion, identificacion, nacionalidad, fecha_inscripcion,     estado, usuario, contrasenia, rol) = fila

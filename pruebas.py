@@ -102,11 +102,12 @@
 
 from datetime import date
 from pathlib import Path
-from base_datos.base_datos import conectar, crear_tablas, guardar_socio, buscar_socio_por_usuario, guardar_cuota, listar_cuotas_de_socio, guardar_club, guardar_actividad, anotar_socio_actividad, listar_actividades_de_socio, desanotar_socio_actividad
+from db_miclub.base_datos import conectar, crear_tablas, guardar_socio, buscar_socio_por_usuario, guardar_cuota, listar_cuotas_de_socio, guardar_club, guardar_actividad, anotar_socio_actividad, listar_actividades_de_socio, desanotar_socio_actividad
 from modelo.socio import Socio
 from modelo.cuota import Cuota
 from modelo.club import Club
 from modelo.actividad import Actividad
+from servicios.servicio_autenticacion import autenticar
 
 RUTA = Path(__file__).parent / "club.db"
 
@@ -156,6 +157,27 @@ actividades_bubu = listar_actividades_de_socio(conexion, "bubu124")
 
 desanotar_socio_actividad(conexion, "bubu124", "Natación")
 
+
+# Prueba 1: Login exitoso
+socio_ok = autenticar("bubu124", "bubu0707")
+if socio_ok is not None:
+    print(f"Login OK - Usuario: {socio_ok.get_usuario()}")
+else:
+    print("Error inesperado en Login OK")
+
+# Prueba 2: Contraseña incorrecta
+socio_fallido_clave = autenticar("bubu124", "clave_mala")
+if socio_fallido_clave is None:
+    print("FALLIDO (correcto)")
+else:
+    print("Error: Permitió ingresar con clave mala")
+
+# Prueba 3: Usuario inexistente
+socio_fallido_user = autenticar("usuario_fantasma", "bubu0707")
+if socio_fallido_user is None:
+    print("FALLIDO (correcto)")
+else:
+    print("Error: Permitió ingresar con usuario inexistente")
 
 conexion.close()
 
