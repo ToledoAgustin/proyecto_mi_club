@@ -149,7 +149,7 @@ def buscar_socio_por_usuario(conexion, usuario):
     return socio
     
 def objeto_socio(fila):
-    (_id, nombre_completo, edad, tipo_identificacion, identificacion, nacionalidad, fecha_inscripcion,     estado, usuario, contrasenia, rol) = fila
+    (nombre_completo, edad, tipo_identificacion, identificacion, nacionalidad, fecha_inscripcion,     estado, usuario, contrasenia, rol) = fila
     return  Socio(nombre_completo, edad, tipo_identificacion, identificacion, nacionalidad, fecha_inscripcion,estado, usuario, contrasenia, rol)
 
 def guardar_cuota(conexion, socio, cuota):

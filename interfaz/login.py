@@ -1,92 +1,90 @@
 import tkinter as tk
+from servicios.servicio_autenticacion import autenticar
 
-# Crear la ventana principal
-ventana = tk.Tk()
-ventana.title('App Mi Club - Nova Esports')
-ventana.geometry("394x600")
+class VentanaLogin(tk.Tk):
+    def __init__(self):
+        super().__init__()
 
-# Paleta de colores claros y cremita
-blanco_cremita = "#FAF7F2"          # Blanco cremita suave para el fondo
-blanco_puro = "#FFFFFF"         # Blanco puro para las cajas de texto
-marron_oscuro = "#3A332C" # Marrón oscuro elegante para los títulos
-gris_calido = "#8C827A"      # Gris cálido suave para las etiquetas
-beige = "#C49A6C"     # Tono crema/beige tostado para el botón
-hover_oscuro = "#B3895B"     # Tono ligeramente más oscuro al presionar el botón
+        # --- Configuración de la Ventana ---
+        self.title('App Mi Club - Nova Esports')
+        self.geometry("394x600")
 
-ventana.configure(bg=blanco_cremita)
+        # Paleta de colores
+        self.blanco_cremita = "#FAF7F2"
+        self.blanco_puro = "#FFFFFF"
+        self.marron_oscuro = "#3A332C"
+        self.gris_calido = "#8C827A"
+        self.beige = "#C49A6C"
+        self.hover_oscuro = "#B3895B"
 
-ventana.configure(bg=blanco_cremita)
+        self.configure(bg=self.blanco_cremita)
 
-# --- Encabezado ---
-etiqueta_marca = tk.Label(
-    ventana, 
-    text="Nova Esports", 
-    bg=blanco_cremita, 
-    fg=beige, 
-    font=("Arial", 11, "bold")
-)
-etiqueta_marca.pack(pady=(40, 5)) # Posiciona el widget con 40px de margen arriba y 5px abajo
+        # --- Crear Interfaz ---
+        self._crear_widgets()
 
-etiqueta_titulo = tk.Label(
-    ventana, 
-    text="Iniciar Sesión", 
-    bg=blanco_cremita, 
-    fg=gris_calido, 
-    font=("Arial", 20, "bold")
-)
-etiqueta_titulo.pack(pady=(0, 25)) # Margen vertical: 0px arriba, 25px abajo
+        # Permite dar Enter para ingresar
+        self.bind('<Return>', self.iniciar_sesion)
 
-# --- Campo Usuario ---
-etiqueta_usuario = tk.Label(
-    ventana, 
-    text="Usuario / Email", 
-    bg=blanco_cremita, 
-    fg=gris_calido, 
-    font=("Arial", 10, "bold")
-)
-etiqueta_usuario.pack(anchor="w", padx=45, pady=(5, 5)) # Alinea al oeste (izquierda) con sangrado de 45px
+    def _crear_widgets(self):
+        # --- Encabezado ---
+        tk.Label(self, text="Nova Esports", bg=self.blanco_cremita, fg=self.beige, font=("Arial", 11, "bold")).pack(pady=(40, 5))
+        tk.Label(self, text="Iniciar Sesión", bg=self.blanco_cremita, fg=self.gris_calido, font=("Arial", 20, "bold")).pack(pady=(0, 25))
 
-entrada_usuario = tk.Entry(
-    ventana, 
-    bg=blanco_puro,            
-    fg=marron_oscuro,          
-    bd=1,                      
-    relief="solid",            # Estilo del borde con línea continua fina
-    font=("Arial", 11)         
-)
-entrada_usuario.pack(fill="x", padx=45, ipady=6, pady=(0, 15)) # Se estira a lo ancho (fill="x") y le da altura interna (ipady=6)
+        # --- Campos ---
+        tk.Label(self, text="Usuario / Email", bg=self.blanco_cremita, fg=self.gris_calido, font=("Arial", 10, "bold")).pack(anchor="w", padx=45, pady=(5, 5))
+        self.entrada_usuario = tk.Entry(self, bg=self.blanco_puro, fg=self.marron_oscuro, bd=1, relief="solid", font=("Arial", 11))
+        self.entrada_usuario.pack(fill="x", padx=45, ipady=6, pady=(0, 15))
 
-# --- Campo Contraseña ---
-etiqueta_clave = tk.Label(
-    ventana, 
-    text="Contraseña",         # Texto explicativo para el campo contraseña
-    bg=blanco_cremita,         
-    fg=gris_calido,           
-    font=("Arial", 10, "bold") 
-)
-etiqueta_clave.pack(anchor="w", padx=45, pady=(5, 5)) # Alineación a la izquierda con margen horizontal
+        tk.Label(self, text="Contraseña", bg=self.blanco_cremita, fg=self.gris_calido, font=("Arial", 10, "bold")).pack(anchor="w", padx=45, pady=(5, 5))
+        self.entrada_contrasenia = tk.Entry(self, bg=self.blanco_puro, fg=self.marron_oscuro, show="*", bd=1, relief="solid", font=("Arial", 11))
+        self.entrada_contrasenia.pack(fill="x", padx=45, ipady=6, pady=(0, 15))
 
-entrada_clave = tk.Entry(
-    ventana, 
-    bg=blanco_puro,            
-    fg=marron_oscuro,          
-    show="•",                  # Enmascara los caracteres escritos por viñetas
-    bd=1,                      # Borde fino de 1px
-    relief="solid",            # Borde sólido
-    font=("Arial", 11)         
-)
-entrada_clave.pack(fill="x", padx=45, ipady=6, pady=(0, 20)) # Ocupa el ancho con padding interno
+        # Etiqueta para errores
+        self.etiqueta_mensaje = tk.Label(self, text="", bg=self.blanco_cremita, font=("Arial", 9, "bold"))
+        self.etiqueta_mensaje.pack(pady=(0, 15))
 
-# --- Lógica del Inicio de Sesión ---
-def iniciar_sesion():
-    usuario = entrada_usuario.get()  # Lee el texto escrito en la caja de usuario
-    clave = entrada_clave.get()      # Lee el texto escrito en la caja de contraseña
-    
-    if usuario == "" or clave == "": # Evalúa si alguno de los campos quedó vacío
-        # Si falta información, muestra una advertencia en rojo (#C0392B)
-        etiqueta_mensaje.config(text="Por favor, completa todos los campos", fg="#C0392B")
-    else:
-        # Si ambos campos tienen texto, confirma el acceso en verde (#27AE60)
-        etiqueta_mensaje.config(text=f"¡Bienvenido/a, {usuario}!", fg="#27AE60")
+        # --- Botón ---
+        self.boton_ingresar = tk.Button(
+            self, 
+            text="Ingresar", 
+            bg=self.beige, 
+            fg=self.blanco_puro, 
+            activebackground=self.hover_oscuro, 
+            activeforeground=self.blanco_puro, 
+            font=("Arial", 11, "bold"), 
+            bd=0, 
+            cursor="hand2", 
+            command=self.iniciar_sesion
+        )
+        self.boton_ingresar.pack(fill="x", padx=45, ipady=8, pady=(0, 10))
 
-ventana.mainloop()
+    def iniciar_sesion(self, event=None):
+        usuario = self.entrada_usuario.get().strip()
+        contrasenia = self.entrada_contrasenia.get().strip()
+        
+        # 1. Validar que los campos no estén vacíos
+        if not usuario or not contrasenia:
+            self.etiqueta_mensaje.config(text="Por favor, completa todos los campos", fg="#C0392B")
+            return
+
+        # 2. Llamar al servicio autenticar()
+        socio = autenticar(usuario, contrasenia)
+        
+        if socio:
+            self.etiqueta_mensaje.config(text="")
+            # 3. Mirar socio.rol para decidir qué panel abrir
+            if socio.rol == "admin":
+                self.abrir_panel_admin(socio)
+            elif socio.rol == "socio":
+                self.abrir_panel_socio(socio)
+        else:
+            # 4. Mismo mensaje genérico si falla
+            self.etiqueta_mensaje.config(text="Usuario o contraseña incorrectos", fg="#C0392B")
+
+    def abrir_panel_admin(self, socio):
+        self.destroy()
+        # Lanzar la ventana de admin aquí
+
+    def abrir_panel_socio(self, socio):
+        self.destroy()
+        # Lanzar la ventana de socio aquí
