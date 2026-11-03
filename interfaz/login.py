@@ -10,16 +10,18 @@ class VentanaLogin(tk.Tk):
         # --- Configuración de la Ventana ---
         self.title('App Mi Club - Nova Esports')
         self.geometry("394x600")
+        self.resizable(False, False) # Opcional: evita que cambien el tamaño para mantener el diseño
 
-        # Paleta de colores
-        self.blanco_cremita = "#FAF7F2"
+        # Paleta de colores en tonos azules modernos
+        self.fondo_principal = "#F0F4F8"   # Gris azulado muy suave de fondo
         self.blanco_puro = "#FFFFFF"
-        self.marron_oscuro = "#3A332C"
-        self.gris_calido = "#8C827A"
-        self.beige = "#C49A6C"
-        self.hover_oscuro = "#B3895B"
+        self.texto_oscuro = "#1E293B"      # Azul pizarra muy oscuro para textos principales
+        self.texto_secundario = "#64748B"  # Gris pizarra para subtítulos y etiquetas
+        self.azul_primario = "#2563EB"     # Azul vibrante profesional para botones y acentos
+        self.azul_hover = "#1D4ED8"        # Azul más oscuro para el hover del botón
+        self.azul_claro = "#3B82F6"        # Azul brillante para destacar títulos
 
-        self.configure(bg=self.blanco_cremita)
+        self.configure(bg=self.fondo_principal)
 
         # --- Crear Interfaz ---
         self._crear_widgets()
@@ -29,36 +31,87 @@ class VentanaLogin(tk.Tk):
 
     def _crear_widgets(self):
         # --- Encabezado ---
-        tk.Label(self, text="Nova Esports", bg=self.blanco_cremita, fg=self.beige, font=("Arial", 11, "bold")).pack(pady=(40, 5))
-        tk.Label(self, text="Iniciar Sesión", bg=self.blanco_cremita, fg=self.gris_calido, font=("Arial", 20, "bold")).pack(pady=(0, 25))
+        tk.Label(
+            self, 
+            text="Nova Esports", 
+            bg=self.fondo_principal, 
+            fg=self.azul_primario, 
+            font=("Arial", 11, "bold")
+        ).pack(pady=(45, 5))
+        
+        tk.Label(
+            self, 
+            text="Iniciar Sesión", 
+            bg=self.fondo_principal, 
+            fg=self.texto_oscuro, 
+            font=("Arial", 22, "bold")
+        ).pack(pady=(0, 30))
 
         # --- Campos ---
-        tk.Label(self, text="Usuario / Email", bg=self.blanco_cremita, fg=self.gris_calido, font=("Arial", 10, "bold")).pack(anchor="w", padx=45, pady=(5, 5))
-        self.entrada_usuario = tk.Entry(self, bg=self.blanco_puro, fg=self.marron_oscuro, bd=1, relief="solid", font=("Arial", 11))
+        tk.Label(
+            self, 
+            text="Usuario / Email", 
+            bg=self.fondo_principal, 
+            fg=self.texto_secundario, 
+            font=("Arial", 10, "bold")
+        ).pack(anchor="w", padx=45, pady=(5, 5))
+        
+        self.entrada_usuario = tk.Entry(
+            self, 
+            bg=self.blanco_puro, 
+            fg=self.texto_oscuro, 
+            bd=1, 
+            relief="solid", 
+            font=("Arial", 11),
+            highlightthickness=1,
+            highlightcolor=self.azul_primario
+        )
         self.entrada_usuario.pack(fill="x", padx=45, ipady=6, pady=(0, 15))
 
-        tk.Label(self, text="Contraseña", bg=self.blanco_cremita, fg=self.gris_calido, font=("Arial", 10, "bold")).pack(anchor="w", padx=45, pady=(5, 5))
-        self.entrada_contrasenia = tk.Entry(self, bg=self.blanco_puro, fg=self.marron_oscuro, show="*", bd=1, relief="solid", font=("Arial", 11))
+        tk.Label(
+            self, 
+            text="Contraseña", 
+            bg=self.fondo_principal, 
+            fg=self.texto_secundario, 
+            font=("Arial", 10, "bold")
+        ).pack(anchor="w", padx=45, pady=(5, 5))
+        
+        self.entrada_contrasenia = tk.Entry(
+            self, 
+            bg=self.blanco_puro, 
+            fg=self.texto_oscuro, 
+            show="*", 
+            bd=1, 
+            relief="solid", 
+            font=("Arial", 11),
+            highlightthickness=1,
+            highlightcolor=self.azul_primario
+        )
         self.entrada_contrasenia.pack(fill="x", padx=45, ipady=6, pady=(0, 15))
 
         # Etiqueta para errores
-        self.etiqueta_mensaje = tk.Label(self, text="", bg=self.blanco_cremita, font=("Arial", 9, "bold"))
+        self.etiqueta_mensaje = tk.Label(
+            self, 
+            text="", 
+            bg=self.fondo_principal, 
+            font=("Arial", 9, "bold")
+        )
         self.etiqueta_mensaje.pack(pady=(0, 15))
 
         # --- Botón ---
         self.boton_ingresar = tk.Button(
             self, 
             text="Ingresar", 
-            bg=self.beige, 
+            bg=self.azul_primario, 
             fg=self.blanco_puro, 
-            activebackground=self.hover_oscuro, 
+            activebackground=self.azul_hover, 
             activeforeground=self.blanco_puro, 
             font=("Arial", 11, "bold"), 
             bd=0, 
             cursor="hand2", 
             command=self.iniciar_sesion
         )
-        self.boton_ingresar.pack(fill="x", padx=45, ipady=8, pady=(0, 10))
+        self.boton_ingresar.pack(fill="x", padx=45, ipady=10, pady=(0, 10))
 
     def iniciar_sesion(self, event=None):
         usuario = self.entrada_usuario.get().strip()
@@ -66,15 +119,14 @@ class VentanaLogin(tk.Tk):
         
         # 1. Validar que los campos no estén vacíos
         if not usuario or not contrasenia:
-            self.etiqueta_mensaje.config(text="Por favor, completa todos los campos", fg="#C0392B")
+            self.etiqueta_mensaje.config(text="Por favor, completa todos los campos", fg="#EF4444")
             return
 
         # 2. Llamar al servicio autenticar()
         socio = autenticar(usuario, contrasenia)
 
         if socio:
-            self.etiqueta_mensaje.config(text="Iniciaste sesion correctamente")
-
+            self.etiqueta_mensaje.config(text="Iniciaste sesion correctamente", fg="#10B981")
             self.withdraw() # Ocultamos la ventana Login
         
         if socio:
@@ -84,4 +136,4 @@ class VentanaLogin(tk.Tk):
             elif socio.rol == "socio":
                 PanelSocio(self,socio)
         else:
-            self.etiqueta_mensaje.config(text="Usuario o contraseña incorrectos", fg="#C0392B")
+            self.etiqueta_mensaje.config(text="Usuario o contraseña incorrectos", fg="#EF4444")
