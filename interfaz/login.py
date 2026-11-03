@@ -1,5 +1,7 @@
 import tkinter as tk
 from servicios.servicio_autenticacion import autenticar
+from .panel_admin import PanelAdmin
+from .panel_socio import PanelSocio
 
 class VentanaLogin(tk.Tk):
     def __init__(self):
@@ -69,22 +71,17 @@ class VentanaLogin(tk.Tk):
 
         # 2. Llamar al servicio autenticar()
         socio = autenticar(usuario, contrasenia)
+
+        if socio:
+            self.etiqueta_mensaje.config(text="Iniciaste sesion correctamente")
+
+            self.withdraw() # Ocultamos la ventana Login
         
         if socio:
             self.etiqueta_mensaje.config(text="")
-            # 3. Mirar socio.rol para decidir qué panel abrir
             if socio.rol == "admin":
-                self.abrir_panel_admin(socio)
+                PanelAdmin(self,socio)
             elif socio.rol == "socio":
-                self.abrir_panel_socio(socio)
+                PanelSocio(self,socio)
         else:
-            # 4. Mismo mensaje genérico si falla
             self.etiqueta_mensaje.config(text="Usuario o contraseña incorrectos", fg="#C0392B")
-
-    def abrir_panel_admin(self, socio):
-        self.destroy()
-        # Lanzar la ventana de admin aquí
-
-    def abrir_panel_socio(self, socio):
-        self.destroy()
-        # Lanzar la ventana de socio aquí

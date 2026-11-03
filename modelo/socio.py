@@ -3,7 +3,7 @@ from modelo.persona import Persona
 
 class Socio(Persona):
     def __init__(self, nombre_completo, edad, tipo_identificacion, identificacion, nacionalidad,
-                fecha_inscripcion, estado, usuario, contrasenia, rol):
+                fecha_inscripcion, estado,rol, usuario, contrasenia):
         super().__init__(nombre_completo, edad, tipo_identificacion, identificacion, nacionalidad)
         self.clubes = []
         self.cuotas = []

@@ -118,17 +118,16 @@ if RUTA.exists():
 conexion = conectar(str(RUTA))
 crear_tablas(conexion)
 
-bubu = Socio("bubuzela_bubu", 24, "dni", 42890413, "argentino", date(2026, 1, 1), "activo", "bubu124", "bubu0707", "socio")
+bubu = Socio("bubuzela_bubu", 24, "dni", 42890413, "argentino", date(2026, 1, 1), "activo", "socio","bubu124", "bubu0707")
 guardar_socio(conexion, bubu)
 print("Socio guardado.")
-blanco = "#ffffff"
 
 cuota1 = Cuota("Pendiente", date(2026, 10, 10), "Octubre 2026")
 cuota1.socio_id = "bubu124" 
 guardar_cuota(conexion, bubu, cuota1)
 print("Cuota guardada.")
 
-carlito = Socio("carlito_bala", 30, "dni", 38456721, "argentino", date(2026, 2, 15), "activo", "carlito99", "bala1234", "socio")
+carlito = Socio("carlito_bala", 30, "dni", 38456721, "argentino", date(2026, 2, 15), "activo","socio","carlito99", "bala1234")
 guardar_socio(conexion, carlito)
 print("Socio guardado.")
 
