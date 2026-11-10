@@ -102,12 +102,14 @@
 
 from datetime import date
 from pathlib import Path
-from db_miclub.base_datos import conectar, crear_tablas, guardar_socio, buscar_socio_por_usuario, guardar_cuota, listar_cuotas_de_socio, guardar_club, guardar_actividad, anotar_socio_actividad, listar_actividades_de_socio, desanotar_socio_actividad
+from db_miclub.base_datos import conectar, crear_tablas, guardar_socio, buscar_socio_por_usuario, guardar_cuota, listar_cuotas_de_socio, guardar_club, guardar_actividad, anotar_socio_actividad, listar_actividades_de_socio, desanotar_socio_actividad, asociar_socio_club, listar_clubes_de_socio
 from modelo.socio import Socio
 from modelo.cuota import Cuota
 from modelo.club import Club
 from modelo.actividad import Actividad
 from servicios.servicio_autenticacion import autenticar
+from servicios.servicios_socios import listar_socios, listar_clubes_de_socio, registrar_socio, suspender_socio, reactivar_socio
+
 
 RUTA = Path(__file__).parent / "club.db"
 
@@ -142,6 +144,14 @@ club = Club("9 de julio Rafaela", "Club de fútbol", "Santa Fe", "Lucas Astrada"
 guardar_club(conexion, club)
 print("Club guardado.")
 
+club2 = Club("Atlético de Rafaela", "Club de fútbol", "Santa Fe", "Pedro Gómez", "12/05/1907")
+guardar_club(conexion, club2)
+print("Club 2 guardado.")
+
+club3 = Club("Racing de Avellaneda", "Club de fútbol", "Buenos Aires", "Diego Milito", "25/03/1903")
+guardar_club(conexion, club3)
+print("Club 3 guardado.")
+
 actividad1 = Actividad("Fútbol", "Martes", "18:00")
 actividad2 = Actividad("Natación", "Jueves", "10:00")
 guardar_actividad(conexion, actividad1)
@@ -153,9 +163,7 @@ anotar_socio_actividad(conexion, "bubu124", "Natación")
 
 actividades_bubu = listar_actividades_de_socio(conexion, "bubu124")
 
-
 desanotar_socio_actividad(conexion, "bubu124", "Natación")
-
 
 # Prueba 1: Login exitoso
 socio_ok = autenticar("bubu124", "bubu0707")
@@ -178,5 +186,19 @@ if socio_fallido_user is None:
 else:
     print("Error: Permitió ingresar con usuario inexistente")
 
-conexion.close()
+asociar_socio_club(conexion, "bubu124", "9 de julio Rafaela")
+clubes = listar_clubes_de_socio("bubu124")
+print("Clubes de bubu:")
+for club in clubes:
+    print(club.nombre)
 
+asociar_socio_club(conexion, "carlito99", "Atlético de Rafaela")
+clubes = listar_clubes_de_socio("carlito99")
+print("Clubes de carlito:")
+for club in clubes:
+    print(club.nombre)
+
+print(suspender_socio("bubu124"))
+print(reactivar_socio("bubu124"))
+print(len(listar_socios()))
+conexion.close()

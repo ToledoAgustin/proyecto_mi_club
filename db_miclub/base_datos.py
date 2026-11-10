@@ -51,6 +51,14 @@ def crear_tablas(conexion):
     """)
 
     cursor.execute("""
+        CREATE TABLE IF NOT EXISTS socio_club (
+            socio_id INTEGER REFERENCES socios(id),
+            club_id  INTEGER REFERENCES clubes(id),
+            PRIMARY KEY (socio_id, club_id)
+        )
+    """)
+
+    cursor.execute("""
         CREATE TABLE IF NOT EXISTS socio_actividad (
             socio_id INTEGER NOT NULL,
             actividad_id INTEGER NOT NULL,
@@ -272,3 +280,77 @@ def obtener_club(conexion):
         return None
     nombre, descripcion, ubicacion, presidente, fecha_fundacion = fila
     return Club(nombre, descripcion, ubicacion, presidente, fecha_fundacion)
+
+
+def asociar_socio_club(conexion, usuario, nombre_club):
+    """Asocia al socio con el club indicado (muchos a muchos)."""
+    cursor = conexion.cursor()
+
+    cursor.execute("SELECT id FROM socios WHERE usuario = ?", (usuario,))
+    fila = cursor.fetchone()
+    if fila is None:
+        return "El socio no existe."
+    socio_id = fila[0]
+
+    cursor.execute("SELECT id FROM clubes WHERE nombre = ?", (nombre_club,))
+    fila = cursor.fetchone()
+    if fila is None:
+        return f"El club {nombre_club} no existe."
+    club_id = fila[0]
+
+    cursor.execute(
+        "INSERT OR IGNORE INTO socio_club (socio_id, club_id) VALUES (?, ?)",
+        (socio_id, club_id)
+    )
+    conexion.commit()
+    return f"Te asociaste al club {nombre_club}."
+
+
+def listar_clubes_de_socio(conexion, usuario):
+    """Devuelve una lista de objetos Club a los que pertenece el socio."""
+    cursor = conexion.cursor()
+
+    cursor.execute("SELECT id FROM socios WHERE usuario = ?", (usuario,))
+    fila = cursor.fetchone()
+    if fila is None:
+        return []
+    socio_id = fila[0]
+
+    cursor.execute(
+        """
+        SELECT c.nombre, c.descripcion, c.ubicacion, c.presidente, c.fecha_fundacion
+        FROM clubes c
+        INNER JOIN socio_club sc ON c.id = sc.club_id
+        WHERE sc.socio_id = ?
+        """,
+        (socio_id,)
+    )
+
+    clubes = []
+    for fila in cursor.fetchall():
+        nombre, descripcion, ubicacion, presidente, fecha_fundacion = fila
+        clubes.append(Club(nombre, descripcion, ubicacion, presidente, fecha_fundacion))
+    return clubes
+
+
+def listar_socios(conexion):
+    cursor = conexion.cursor()
+    cursor.execute("SELECT * FROM socios")
+    socios = []
+    for fila in cursor.fetchall():
+        socio = Socio(
+            fila[1], fila[2], fila[3], fila[4], fila[5],
+            date.fromisoformat(fila[6]) if isinstance(fila[6], str) else fila[6],
+            fila[7], fila[8], fila[9], fila[10],
+        )
+        socios.append(socio)
+    return socios
+
+def actualizar_estado_socio(conexion, usuario, nuevo_estado):
+    cursor = conexion.cursor()
+    cursor.execute(
+        "UPDATE socios SET estado = ? WHERE usuario = ?",
+        (nuevo_estado, usuario)
+    )
+
+    conexion.commit()
