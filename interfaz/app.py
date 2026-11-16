@@ -1,6 +1,12 @@
 import tkinter as tk
 from tkinter import ttk
 
+try:
+    from PIL import Image, ImageTk
+except ImportError:
+    Image = None
+    ImageTk = None
+
 from interfaz.login import PantallaLogin
 from interfaz.panel_admin import PanelAdmin
 from interfaz.panel_socio import PanelSocio
@@ -78,8 +84,22 @@ class ClubApp(tk.Tk):
         encabezado.pack_propagate(False)
 
         self._logo = None
+        self._logo_grande = None
         if RUTA_LOGO.exists():
-            self._logo = tk.PhotoImage(file=str(RUTA_LOGO))
+            if Image is not None:
+                original = Image.open(str(RUTA_LOGO))
+                ancho_chico = 60
+                alto_chico = round(original.height * ancho_chico / original.width)
+                ancho_grande = 150
+                alto_grande = round(original.height * ancho_grande / original.width)
+                self._logo = ImageTk.PhotoImage(
+                    original.resize((ancho_chico, alto_chico), Image.LANCZOS)
+                )
+                self._logo_grande = ImageTk.PhotoImage(
+                    original.resize((ancho_grande, alto_grande), Image.LANCZOS)
+                )
+            else:
+                self._logo = tk.PhotoImage(file=str(RUTA_LOGO))
             tk.Label(
                 encabezado,
                 image=self._logo,
@@ -188,7 +208,7 @@ class ClubApp(tk.Tk):
         self.ocultar_menu()
 
         if self._logo is not None:
-            tk.Label(self.contenido, image=self._logo, bg=PANEL).pack(pady=(40, 10))
+            tk.Label(self.contenido, image=self._logo_grande, bg=PANEL).pack(pady=(40, 10))
 
         tk.Label(
             self.contenido,
@@ -250,7 +270,7 @@ class ClubApp(tk.Tk):
         """Guarda el socio autenticado y abre su panel según el rol."""
         self.limpiar_contenido()
         self.socio_actual = socio
-        if socio.es_admin():
+        if socio.es_administrador():
             self.panel = PanelAdmin(self, socio)
         else:
             self.panel = PanelSocio(self, socio)

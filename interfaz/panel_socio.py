@@ -187,7 +187,7 @@ class PanelSocio(tk.Frame):
         for club in clubes:
             tk.Label(
                 self,
-                text=f"• {club.informacion()}",
+                text=f"• {club.mostrar_info()}",
                 font=FUENTE,
                 bg=PANEL,
                 fg=TEXTO,
@@ -254,7 +254,7 @@ class PanelSocio(tk.Frame):
             tabla.insert(
                 "",
                 "end",
-                values=(cuota.periodo, cuota.get_estado(), cuota.fecha_vencimiento),
+                values=(cuota.periodo, cuota.get_estado(), cuota.fecha_de_vencimiento),
                 tags=(rayado, cuota.get_estado()),
             )
             self._periodos.append(cuota.periodo)

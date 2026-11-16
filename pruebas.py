@@ -154,7 +154,7 @@ guardar_socio(conexion, shakira)
 maradona = Socio("diego_maradona", 60, "dni", 33000003, "argentino", date(2026, 1, 15), "Suspendido", "socio", "diego10", "manodedios")
 guardar_socio(conexion, maradona)
 
-tini = Socio("tini_stoessel", 29, "dni", 33000004, "argentino", date(2026, 2, 1), "Activo", "admin", "tini_adm", "tini2026")
+tini = Socio("tini_stoessel", 29, "dni", 33000004, "argentino", date(2026, 2, 1), "Activo", "admin", "admin", "admin123")
 guardar_socio(conexion, tini)
 
 bichota = Socio("karol_g", 35, "dni", 33000005, "colombiana", date(2026, 2, 10), "Activo", "admin", "karol_adm", "bichota01")
@@ -276,7 +276,7 @@ print("UC-01 autenticación: OK")
 assert obtener_socio("bubu124") is not None
 clubes = listar_clubes_de_socio("bubu124")
 assert len(clubes) == 1 and clubes[0].nombre == "9 de julio Rafaela"
-assert listar_clubes_de_socio("tini_adm") == []
+assert listar_clubes_de_socio("admin") == []
 print("UC-02 datos y clubes: OK")
 
 # UC-03: Listar cuotas

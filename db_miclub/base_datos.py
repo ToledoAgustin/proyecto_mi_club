@@ -59,6 +59,15 @@ def crear_tablas(conexion):
     """)
 
     cursor.execute("""
+        CREATE TABLE IF NOT EXISTS actividades (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nombre          TEXT NOT NULL,
+            dia             DATE NOT NULL,
+            horario         TIME NOT NULL
+        )
+    """)
+
+    cursor.execute("""
         CREATE TABLE IF NOT EXISTS socio_actividad (
             socio_id INTEGER NOT NULL,
             actividad_id INTEGER NOT NULL,
@@ -68,16 +77,7 @@ def crear_tablas(conexion):
             FOREIGN KEY (actividad_id) REFERENCES actividades(id)
     )
     """)
-   
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS actividades (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nombre          TEXT NOT NULL,
-            dia             DATE NOT NULL,
-            horario         TIME NOT NULL
-        )
-    """)
-        
+
     conexion.commit()
 
 # ---Metodos de guardar y listar ---
@@ -150,15 +150,15 @@ def buscar_socio_por_usuario(conexion, usuario):
         if isinstance(fila[6], str)
         else fila[6],  # fecha_inscripcion
         fila[7],  # estado
-        fila[8],  # usuario
-        fila[9],  # contrasenia
-        fila[10],  # rol
+        fila[8],  # rol
+        fila[9],  # usuario
+        fila[10],  # contrasenia
     )
     return socio
     
 def objeto_socio(fila):
-    (nombre_completo, edad, tipo_identificacion, identificacion, nacionalidad, fecha_inscripcion,     estado, usuario, contrasenia, rol) = fila
-    return  Socio(nombre_completo, edad, tipo_identificacion, identificacion, nacionalidad, fecha_inscripcion,estado, usuario, contrasenia, rol)
+    (nombre_completo, edad, tipo_identificacion, identificacion, nacionalidad, fecha_inscripcion,     estado, rol, usuario, contrasenia) = fila
+    return  Socio(nombre_completo, edad, tipo_identificacion, identificacion, nacionalidad, fecha_inscripcion,estado, rol, usuario, contrasenia)
 
 def guardar_cuota(conexion, socio, cuota):
     cursor = conexion.cursor()
@@ -176,7 +176,9 @@ def guardar_cuota(conexion, socio, cuota):
     """, (
         socio_id_real,
         cuota.get_estado(),
-        cuota.fecha_de_vencimiento,
+        cuota.fecha_de_vencimiento.isoformat()
+        if hasattr(cuota.fecha_de_vencimiento, "isoformat")
+        else str(cuota.fecha_de_vencimiento),
         cuota.periodo
     ))
     conexion.commit()

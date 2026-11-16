@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
+from datetime import date
 
 from interfaz.tema import (
     ESTADO_ACTIVO,
@@ -264,6 +265,9 @@ class PanelAdmin(tk.Frame):
                 campos["tipo_identificacion"].get(),
                 campos["identificacion"].get(),
                 campos["nacionalidad"].get(),
+                date.today(),
+                "Activo",
+                "socio",
                 campos["usuario"].get(),
                 campos["contrasenia"].get(),
             )
