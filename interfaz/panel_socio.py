@@ -1,3 +1,4 @@
+
 import tkinter as tk
 from tkinter import messagebox, ttk
 
@@ -15,8 +16,8 @@ from interfaz.tema import (
     PRIMARIO,
     TEXTO,
 )
-from servicios.servicio_cuotas import listar_cuotas, pagar_cuota
-from servicios.servicio_socios import listar_clubes_de_socio, obtener_socio
+from servicios.servicios_cuota  import listar_cuotas, pagar_cuota
+from servicios.servicios_socios import listar_clubes_de_socio, obtener_socio
 
 
 class PanelSocio(tk.Frame):

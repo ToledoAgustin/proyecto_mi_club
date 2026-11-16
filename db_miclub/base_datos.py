@@ -352,5 +352,35 @@ def actualizar_estado_socio(conexion, usuario, nuevo_estado):
         "UPDATE socios SET estado = ? WHERE usuario = ?",
         (nuevo_estado, usuario)
     )
-
     conexion.commit()
+
+def pagar_cuota(conexion, usuario, periodo):
+    cursor = conexion.cursor()
+    cursor.execute("SELECT id FROM socios WHERE usuario = ?", (usuario,))
+    fila = cursor.fetchone()
+    if fila is None:
+        return "El socio no existe."
+    socio_id = fila[0]
+
+    cursor.execute(
+        "SELECT id, estado, fecha_de_vencimiento FROM cuotas WHERE socio_id = ? AND periodo = ?",
+        (socio_id, periodo),
+    )
+    fila = cursor.fetchone()
+    if fila is None:
+        return f"No existe una cuota para el período {periodo}."
+
+    cuota_id, estado, fecha_vencimiento = fila
+    if estado == "Pagada":
+        return f"La cuota del período {periodo} ya está pagada."
+
+    cuota = Cuota(estado, fecha_vencimiento, periodo)
+    mensaje = cuota.registrar_pago()
+
+    cursor.execute(
+        "UPDATE cuotas SET estado = ? WHERE id = ?",
+        (cuota.get_estado(), cuota_id),
+    )
+    conexion.commit()
+    return mensaje
+    

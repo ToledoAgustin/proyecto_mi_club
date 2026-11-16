@@ -13,8 +13,8 @@ from interfaz.tema import (
     PRIMARIO,
     TEXTO,
 )
-from servicios.servicio_cuotas import listar_cuotas
-from servicios.servicio_socios import (
+from servicios.servicios_cuota import listar_cuotas
+from servicios.servicios_socios import (
     listar_socios,
     obtener_socio,
     reactivar_socio,

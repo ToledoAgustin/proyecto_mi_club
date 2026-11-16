@@ -13,12 +13,23 @@ from modelo.socio import Socio
 
 RUTA_DB = Path(__file__).parent.parent / "club.db"
 
+
+def obtener_socio(usuario):
+    """Devuelve el objeto Socio o None si no existe."""
+    conexion = conectar(str(RUTA_DB))
+    try:
+        return buscar_socio_por_usuario(conexion, usuario)
+    finally:
+        conexion.close()
+
+
 def listar_socios():
     conexion = conectar(str(RUTA_DB))
     try:
         return listar_socios_en_bd(conexion)
     finally:
         conexion.close()
+
 
 def listar_clubes_de_socio(usuario):
     conexion = conectar(str(RUTA_DB))
@@ -27,18 +38,19 @@ def listar_clubes_de_socio(usuario):
     finally:
         conexion.close()
 
+
 def registrar_socio(nombre_completo, edad, tipo_identificacion, identificacion, nacionalidad,
-                fecha_inscripcion, estado,rol, usuario, contrasenia):
+                    fecha_inscripcion, estado, rol, usuario, contrasenia):
     # 1. Limpiar los tres textos
-    nombre = nombre.strip()
+    nombre = nombre_completo.strip()
     usuario = usuario.strip()
     identificacion = identificacion.strip()
 
     # 2. Obligatorios
     if not nombre or not usuario or not contrasenia or not identificacion:
         raise ValueError("Completá todos los campos obligatorios.")
-    
-  # 3. Edad como número
+
+    # 3. Edad como número
     try:
         edad = int(edad)
     except (TypeError, ValueError):
@@ -55,16 +67,13 @@ def registrar_socio(nombre_completo, edad, tipo_identificacion, identificacion, 
         (tipo_identificacion or "").strip() or None,
         identificacion,
         (nacionalidad or "").strip() or None,
-        date.today(),
-        "Activo",
-        "socio",
+        fecha_inscripcion or date.today(),
+        estado or "Activo",
+        rol or "socio",
         usuario,
         contrasenia,
     )
 
-    # 6. Validar la identificación con el modelo
-    if not socio.verificar_identificacion():
-        raise ValueError("La identificación no puede estar vacía.")
 
     # 7. Recién ahora la base de datos
     conexion = conectar(str(RUTA_DB))
@@ -73,6 +82,7 @@ def registrar_socio(nombre_completo, edad, tipo_identificacion, identificacion, 
     finally:
         conexion.close()
     return socio
+
 
 def suspender_socio(usuario):
     conexion = conectar(str(RUTA_DB))
@@ -86,6 +96,7 @@ def suspender_socio(usuario):
         return "El socio ya se encuentra suspendido."
     finally:
         conexion.close()
+
 
 def reactivar_socio(usuario):
     conexion = conectar(str(RUTA_DB))
