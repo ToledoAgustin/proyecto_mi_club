@@ -19,6 +19,16 @@ ESTADO_SUSPENDIDO = "#B00020"  # rojo para socios suspendidos
 ESTADO_VENCIDO = "#B00020"     # rojo para cuotas vencidas
 ESTADO_PENDIENTE = "#B26A00"   # naranja para cuotas pendientes
 
+# ── Colores nuevos ────────────────────────────────────
+TEXTO_SUAVE = "#64748B"             # texto secundario / subtítulos
+BORDE = "#E2E8F0"                   # bordes finos de tarjetas y tablas
+ENCABEZADO_TABLA = "#F1F5F9"        # fondo del encabezado de las tablas
+FILA_SUSPENDIDO = "#FDECEE"         # fondo rosado para socios suspendidos
+FILA_SUSPENDIDO_PAR = "#FADDE1"     # idem, para el rayado
+ESTADO_ACTIVO_HOVER = "#166016"     # hover del botón verde
+ESTADO_SUSPENDIDO_HOVER = "#8A0019" # hover del botón rojo
+CAMPO = "#F8FAFC"                   # fondo de los campos de texto
+
 # ── Fuentes ────────────────────────────────────────────────────
 FUENTE_TITULO = ("Arial", 20, "bold")
 FUENTE_GRANDE = ("Arial", 30, "bold")

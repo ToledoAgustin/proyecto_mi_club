@@ -3,9 +3,16 @@ from tkinter import messagebox, ttk
 from datetime import date
 
 from interfaz.tema import (
+    BORDE,
+    CAMPO,
+    ENCABEZADO_TABLA,
     ESTADO_ACTIVO,
+    ESTADO_ACTIVO_HOVER,
     ESTADO_SUSPENDIDO,
+    ESTADO_SUSPENDIDO_HOVER,
     FILA_PAR,
+    FILA_SUSPENDIDO,
+    FILA_SUSPENDIDO_PAR,
     FUENTE,
     FUENTE_CHICA,
     FUENTE_NEGRITA,
@@ -13,6 +20,8 @@ from interfaz.tema import (
     PANEL,
     PRIMARIO,
     TEXTO,
+    TEXTO_CLARO,
+    TEXTO_SUAVE,
 )
 from servicios.servicios_cuota import listar_cuotas
 from servicios.servicios_socios import (
@@ -42,7 +51,54 @@ class PanelAdmin(tk.Frame):
         self.app = app
         self.usuario = socio.get_usuario()
         self._usuarios = []
+        self._configurar_estilos()
         self.pack(fill="both", expand=True)
+
+    # ── Estilos ────────────────────────────────────────────────
+
+    def _configurar_estilos(self):
+        """Estilo de la tabla. Se usa el tema 'clam' porque el tema por
+        defecto de Windows ignora los colores del encabezado (por eso
+        no se veían los títulos de las columnas)."""
+        estilo = ttk.Style()
+        estilo.theme_use("clam")
+
+        estilo.configure(
+            "Club.Treeview",
+            background=PANEL,
+            fieldbackground=PANEL,
+            foreground=TEXTO,
+            rowheight=34,
+            borderwidth=0,
+            font=("Arial", 10),
+        )
+        estilo.configure(
+            "Club.Treeview.Heading",
+            background=ENCABEZADO_TABLA,
+            foreground=TEXTO,
+            font=("Arial", 10, "bold"),
+            relief="flat",
+            borderwidth=0,
+            padding=(8, 9),
+        )
+        estilo.map(
+            "Club.Treeview",
+            background=[("selected", PRIMARIO)],
+            foreground=[("selected", TEXTO_CLARO)],
+        )
+        estilo.map(
+            "Club.Treeview.Heading",
+            background=[("active", BORDE)],
+        )
+        estilo.configure(
+            "Club.Vertical.TScrollbar",
+            background=BORDE,
+            troughcolor=PANEL,
+            borderwidth=0,
+            arrowsize=14,
+        )
+
+    # ── Utilidades ─────────────────────────────────────────────
 
     def botones_menu(self):
         return [
@@ -56,20 +112,52 @@ class PanelAdmin(tk.Frame):
         for elemento in self.winfo_children():
             elemento.destroy()
 
-    def _crear_titulo(self, texto):
+    def _crear_titulo(self, texto, subtitulo=None):
         tk.Label(
             self,
             text=texto,
             font=FUENTE_TITULO,
             bg=PANEL,
             fg=PRIMARIO,
-        ).pack(pady=(15, 10))
+        ).pack(pady=(18, 2 if subtitulo else 12))
+
+        if subtitulo:
+            tk.Label(
+                self,
+                text=subtitulo,
+                font=FUENTE_CHICA,
+                bg=PANEL,
+                fg=TEXTO_SUAVE,
+            ).pack(pady=(0, 12))
+
+    def _crear_boton_accion(self, padre, texto, comando, color, color_hover):
+        boton = tk.Button(
+            padre,
+            text=texto,
+            command=comando,
+            font=FUENTE_NEGRITA,
+            bg=color,
+            fg=TEXTO_CLARO,
+            activebackground=color_hover,
+            activeforeground=TEXTO_CLARO,
+            relief="flat",
+            bd=0,
+            padx=26,
+            pady=9,
+            cursor="hand2",
+        )
+        boton.bind("<Enter>", lambda _e: boton.config(bg=color_hover))
+        boton.bind("<Leave>", lambda _e: boton.config(bg=color))
+        return boton
 
     # ── Pantallas ──────────────────────────────────────────────
 
     def mostrar_inicio(self):
         self._limpiar()
-        self._crear_titulo("PANEL DE ADMINISTRACIÓN")
+        self._crear_titulo(
+            "PANEL DE ADMINISTRACIÓN",
+            "Resumen general del club",
+        )
 
         socios = listar_socios()
         activos = [s for s in socios if s.estado == "Activo"]
@@ -79,55 +167,67 @@ class PanelAdmin(tk.Frame):
         tarjeta.pack(pady=20)
 
         self._crear_tarjeta(tarjeta, "Socios registrados", str(len(socios)),
-                            PRIMARIO).grid(row=0, column=0, padx=12)
+                            PRIMARIO).grid(row=0, column=0, padx=14)
 
         self._crear_tarjeta(tarjeta, "Activos", str(len(activos)),
-                            ESTADO_ACTIVO).grid(row=0, column=1, padx=12)
+                            ESTADO_ACTIVO).grid(row=0, column=1, padx=14)
 
         self._crear_tarjeta(tarjeta, "Suspendidos", str(len(suspendidos)),
-                            ESTADO_SUSPENDIDO).grid(row=0, column=2, padx=12)
+                            ESTADO_SUSPENDIDO).grid(row=0, column=2, padx=14)
 
         tk.Label(
             self,
-            text=f"Sesión de {self.usuario}. Desde el menú podés gestionar los socios.",
+            text=f"Sesión de {self.usuario}. "
+                 "Desde el menú podés gestionar los socios.",
             font=FUENTE,
             bg=PANEL,
-            fg=TEXTO,
+            fg=TEXTO_SUAVE,
         ).pack(pady=15)
 
     def _crear_tarjeta(self, padre, titulo, valor, color):
-        tarjeta = tk.Frame(padre, bg=PANEL, highlightbackground=FILA_PAR,
+        tarjeta = tk.Frame(padre, bg=PANEL, highlightbackground=BORDE,
                            highlightthickness=1)
+        # Franja de color arriba de la tarjeta
+        tk.Frame(tarjeta, bg=color, height=5).pack(fill="x")
         tk.Label(
             tarjeta,
             text=str(valor),
-            font=("Arial", 26, "bold"),
+            font=("Arial", 30, "bold"),
             bg=PANEL,
             fg=color,
-        ).pack(padx=30, pady=(18, 2))
+            width=7,
+        ).pack(padx=24, pady=(18, 2))
         tk.Label(
             tarjeta,
-            text=titulo,
-            font=FUENTE_CHICA,
+            text=titulo.upper(),
+            font=("Arial", 9, "bold"),
             bg=PANEL,
-            fg=TEXTO,
-        ).pack(padx=30, pady=(0, 18))
+            fg=TEXTO_SUAVE,
+        ).pack(padx=24, pady=(0, 18))
         return tarjeta
 
     def mostrar_socios(self):
         self._limpiar()
-        self._crear_titulo("SOCIOS DEL CLUB")
+        self._crear_titulo(
+            "SOCIOS DEL CLUB",
+            "Seleccioná un socio de la lista para suspenderlo o reactivarlo",
+        )
+
+        contenedor = tk.Frame(self, bg=PANEL, highlightbackground=BORDE,
+                              highlightthickness=1)
+        contenedor.pack(fill="both", expand=True, padx=30, pady=(0, 12))
 
         columnas = ("usuario", "nombre", "estado", "inscripcion", "pendientes")
         tabla = ttk.Treeview(
-            self,
+            contenedor,
             columns=columnas,
             show="headings",
             style="Club.Treeview",
             height=12,
+            selectmode="browse",
         )
-        tabla.heading("usuario", text="Usuario")
-        tabla.heading("nombre", text="Nombre")
+        tabla.heading("usuario", text="Usuario", anchor="w")
+        tabla.heading("nombre", text="Nombre", anchor="w")
         tabla.heading("estado", text="Estado")
         tabla.heading("inscripcion", text="Inscripción")
         tabla.heading("pendientes", text="Cuotas pendientes")
@@ -137,28 +237,40 @@ class PanelAdmin(tk.Frame):
         tabla.column("inscripcion", width=130, anchor="center")
         tabla.column("pendientes", width=140, anchor="center")
 
-        tabla.tag_configure("par", background=FILA_PAR)
-        tabla.tag_configure("impar", background=PANEL)
-        tabla.tag_configure("Activo", foreground=ESTADO_ACTIVO)
-        tabla.tag_configure("Suspendido", foreground=ESTADO_SUSPENDIDO)
-        tabla.pack(fill="both", expand=True, padx=30, pady=(5, 10))
+        # Un solo tag por fila: activos con rayado azul suave,
+        # suspendidos con fondo rosado y texto rojo.
+        tabla.tag_configure("par", background=FILA_PAR, foreground=TEXTO)
+        tabla.tag_configure("impar", background=PANEL, foreground=TEXTO)
+        tabla.tag_configure("susp_par", background=FILA_SUSPENDIDO_PAR,
+                            foreground=ESTADO_SUSPENDIDO)
+        tabla.tag_configure("susp_impar", background=FILA_SUSPENDIDO,
+                            foreground=ESTADO_SUSPENDIDO)
+
+        barra = ttk.Scrollbar(contenedor, orient="vertical",
+                              command=tabla.yview,
+                              style="Club.Vertical.TScrollbar")
+        tabla.configure(yscrollcommand=barra.set)
+        barra.pack(side="right", fill="y")
+        tabla.pack(side="left", fill="both", expand=True)
 
         fila_botones = tk.Frame(self, bg=PANEL)
-        fila_botones.pack(pady=(0, 10))
+        fila_botones.pack(pady=(0, 16))
 
-        self.app.crear_boton(
+        self._crear_boton_accion(
             fila_botones,
             "SUSPENDER",
             lambda: self._cambiar_estado(tabla, suspender_socio),
-            ancho=14,
-        ).pack(side="left", padx=6)
+            ESTADO_SUSPENDIDO,
+            ESTADO_SUSPENDIDO_HOVER,
+        ).pack(side="left", padx=8)
 
-        self.app.crear_boton(
+        self._crear_boton_accion(
             fila_botones,
             "REACTIVAR",
             lambda: self._cambiar_estado(tabla, reactivar_socio),
-            ancho=14,
-        ).pack(side="left", padx=6)
+            ESTADO_ACTIVO,
+            ESTADO_ACTIVO_HOVER,
+        ).pack(side="left", padx=8)
 
         self._cargar_socios(tabla)
 
@@ -175,8 +287,8 @@ class PanelAdmin(tk.Frame):
                 text="No hay socios registrados",
                 font=FUENTE,
                 bg=PANEL,
-                fg=TEXTO,
-            ).pack()
+                fg=TEXTO_SUAVE,
+            ).pack(pady=10)
             return
 
         for indice, socio in enumerate(socios):
@@ -185,6 +297,8 @@ class PanelAdmin(tk.Frame):
                 if cuota.get_estado() in ("Pendiente", "Vencida")
             ]
             rayado = "par" if indice % 2 == 0 else "impar"
+            if socio.estado == "Suspendido":
+                rayado = "susp_" + rayado
             tabla.insert(
                 "",
                 "end",
@@ -195,7 +309,7 @@ class PanelAdmin(tk.Frame):
                     socio.fecha_inscripcion,
                     len(pendientes),
                 ),
-                tags=(rayado, socio.estado),
+                tags=(rayado,),
             )
             self._usuarios.append(socio.get_usuario())
 
@@ -217,19 +331,15 @@ class PanelAdmin(tk.Frame):
 
     def mostrar_registro(self):
         self._limpiar()
-        self._crear_titulo("REGISTRAR NUEVO SOCIO")
+        self._crear_titulo(
+            "REGISTRAR NUEVO SOCIO",
+            "Los campos marcados con * son obligatorios. "
+            "El socio se crea con estado Activo.",
+        )
 
-        tk.Label(
-            self,
-            text="Los campos marcados con * son obligatorios. "
-                 "El socio se crea con estado Activo.",
-            font=FUENTE_CHICA,
-            bg=PANEL,
-            fg=TEXTO,
-        ).pack()
-
-        formulario = tk.Frame(self, bg=PANEL)
-        formulario.pack(pady=15)
+        formulario = tk.Frame(self, bg=PANEL, highlightbackground=BORDE,
+                              highlightthickness=1)
+        formulario.pack(pady=10, ipadx=30, ipady=14)
 
         campos = {}
         for fila, (etiqueta, clave, ocultar) in enumerate(CAMPOS_REGISTRO):
@@ -239,15 +349,22 @@ class PanelAdmin(tk.Frame):
                 font=FUENTE_NEGRITA,
                 bg=PANEL,
                 fg=TEXTO,
-            ).grid(row=fila, column=0, sticky="e", padx=(0, 12), pady=5)
+            ).grid(row=fila, column=0, sticky="e", padx=(20, 12), pady=7)
 
             entrada = tk.Entry(
                 formulario,
                 font=FUENTE,
-                width=26,
+                width=28,
                 show=ocultar,
+                bg=CAMPO,
+                fg=TEXTO,
+                relief="flat",
+                highlightthickness=1,
+                highlightbackground=BORDE,
+                highlightcolor=PRIMARIO,
+                insertbackground=TEXTO,
             )
-            entrada.grid(row=fila, column=1, pady=5)
+            entrada.grid(row=fila, column=1, padx=(0, 20), pady=7, ipady=5)
             campos[clave] = entrada
 
         self.app.crear_boton(
@@ -255,7 +372,7 @@ class PanelAdmin(tk.Frame):
             "GUARDAR SOCIO",
             lambda: self._guardar(campos),
             ancho=22,
-        ).pack(pady=(5, 10))
+        ).pack(pady=(10, 12))
 
     def _guardar(self, campos):
         try:
